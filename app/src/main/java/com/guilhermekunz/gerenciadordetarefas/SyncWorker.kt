@@ -11,7 +11,7 @@ class SyncWorker(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        repository.syncTasks()
+        repository.scheduleSyncWorker()
         return Result.success()
     }
 }
