@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.guilhermekunz.gerenciadordetarefas"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.guilhermekunz.gerenciadordetarefas"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -34,6 +34,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -53,6 +56,10 @@ dependencies {
 
     // Koin para Injeção de Dependência
     implementation(libs.koin.android)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     // Room para banco de dados local
     kapt(libs.androidx.room.compiler)
