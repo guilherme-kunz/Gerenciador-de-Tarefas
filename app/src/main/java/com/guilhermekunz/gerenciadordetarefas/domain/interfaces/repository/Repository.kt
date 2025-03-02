@@ -8,4 +8,8 @@ interface Repository {
     suspend fun insertTask(task: TaskEntity)
 
     fun getAllTasks(): Flow<List<TaskEntity>>
+
+    suspend fun deleteTask(task: TaskEntity)
+
+    suspend fun updateTask(task: TaskEntity)
 }

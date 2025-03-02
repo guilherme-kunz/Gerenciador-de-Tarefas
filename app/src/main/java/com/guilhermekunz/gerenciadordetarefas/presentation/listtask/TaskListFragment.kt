@@ -15,9 +15,7 @@ class TaskListFragment : Fragment() {
 
     private var _binding: FragmentTaskListBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel by viewModel<TaskViewModel>()
-
     private lateinit var adapter: TaskAdapter
 
     override fun onCreateView(
@@ -36,10 +34,11 @@ class TaskListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = TaskAdapter { taskId ->
-//            val action = TaskListFragmentDirections.actionTaskListFragmentToAddTaskFragment(taskId)
-//            findNavController().navigate(action)
-        }
+        adapter = TaskAdapter(
+            onTaskClick = { taskId -> },
+            onDeleteClick = { task -> viewModel.deleteTask(task) },
+            onTaskChecked = { task -> viewModel.updateTask(task) }
+        )
         binding.recyclerViewTasks.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewTasks.adapter = adapter
     }

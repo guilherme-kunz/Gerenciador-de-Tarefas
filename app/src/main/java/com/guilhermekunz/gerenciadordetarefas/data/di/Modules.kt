@@ -6,8 +6,10 @@ import com.guilhermekunz.gerenciadordetarefas.data.database.TaskDatabase
 import com.guilhermekunz.gerenciadordetarefas.data.database.dao.TaskDao
 import com.guilhermekunz.gerenciadordetarefas.data.repository.TaskRepositoryImpl
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.repository.Repository
+import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.DeleteTaskUseCase
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.GetAllTasksUseCase
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.SaveTaskUseCase
+import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.UpdateTaskUseCase
 import com.guilhermekunz.gerenciadordetarefas.presentation.addtask.AddTaskViewModel
 import com.guilhermekunz.gerenciadordetarefas.presentation.listtask.TaskViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -16,7 +18,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { AddTaskViewModel(get()) }
-    viewModel { TaskViewModel(get()) }
+    viewModel { TaskViewModel(get(), get(), get()) }
 }
 
 val repositoryModule = module {
@@ -30,6 +32,8 @@ val repositoryModule = module {
 val useCaseModule = module {
     factory { GetAllTasksUseCase(get()) }
     factory { SaveTaskUseCase(get()) }
+    factory { DeleteTaskUseCase(get()) }
+    factory { UpdateTaskUseCase(get()) }
 }
 
 val userDateBuilder = module {
