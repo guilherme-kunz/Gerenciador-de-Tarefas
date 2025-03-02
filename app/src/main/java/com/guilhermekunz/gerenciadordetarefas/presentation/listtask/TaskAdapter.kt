@@ -26,6 +26,7 @@ class TaskAdapter(
     inner class TaskViewHolder(private val binding: TaskItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: TaskEntity) {
             binding.textViewTaskTitle.text = task.title
+            binding.textViewTaskDescription.text = task.description
             binding.checkBoxCompleted.isChecked = task.isChecked
             binding.root.setOnClickListener { onTaskClick(task.id) }
             binding.btnDelete.setOnClickListener { onDeleteClick(task) }
