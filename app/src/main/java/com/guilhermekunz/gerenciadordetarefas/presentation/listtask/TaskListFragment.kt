@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,7 +36,10 @@ class TaskListFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = TaskAdapter(
-            onTaskClick = { taskId -> },
+            onTaskClick = { taskId ->
+                val bundle = bundleOf("args" to taskId)
+                findNavController().navigate(R.id.action_taskListFragment_to_editTaskFragment, bundle)
+            },
             onDeleteClick = { task -> viewModel.deleteTask(task) },
             onTaskChecked = { task -> viewModel.updateTask(task) }
         )

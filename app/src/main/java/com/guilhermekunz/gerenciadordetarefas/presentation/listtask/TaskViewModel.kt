@@ -6,12 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.guilhermekunz.gerenciadordetarefas.domain.entity.TaskEntity
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.DeleteTaskUseCase
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.GetAllTasksUseCase
-import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.UpdateTaskUseCase
+import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.UpdateCheckBoxTaskUseCase
 import kotlinx.coroutines.launch
 
 class TaskViewModel(getAllTasksUseCase: GetAllTasksUseCase,
                     private val deleteTaskUseCase: DeleteTaskUseCase,
-                    private val updateTaskUseCase: UpdateTaskUseCase
+                    private val updateCheckBoxTaskUseCase: UpdateCheckBoxTaskUseCase
 ) : ViewModel() {
 
     val tasks = getAllTasksUseCase().asLiveData()
@@ -24,7 +24,7 @@ class TaskViewModel(getAllTasksUseCase: GetAllTasksUseCase,
 
     fun updateTask(task: TaskEntity) {
         viewModelScope.launch {
-            updateTaskUseCase(task)
+            updateCheckBoxTaskUseCase(task)
         }
     }
 }
