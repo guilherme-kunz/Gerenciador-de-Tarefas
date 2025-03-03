@@ -6,10 +6,11 @@ import com.guilhermekunz.gerenciadordetarefas.data.database.TaskDatabase
 import com.guilhermekunz.gerenciadordetarefas.data.database.dao.TaskDao
 import com.guilhermekunz.gerenciadordetarefas.data.repository.TaskRepositoryImpl
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.repository.Repository
+import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.ApiCreateTaskUseCase
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.DeleteTaskUseCase
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.GetAllTasksUseCase
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.GetTaskByIdUseCase
-import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.SaveTaskUseCase
+import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.RoomCreateTaskUseCase
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.UpdateCheckBoxTaskUseCase
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.UpdateTaskUseCase
 import com.guilhermekunz.gerenciadordetarefas.presentation.addtask.AddTaskViewModel
@@ -20,7 +21,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { AddTaskViewModel(get()) }
+    viewModel { AddTaskViewModel(get(), get()) }
     viewModel { TaskViewModel(get(), get(), get()) }
     viewModel { EditTaskViewModel(get(), get()) }
 }
@@ -28,18 +29,19 @@ val viewModelModule = module {
 val repositoryModule = module {
     factory <Repository> {
         TaskRepositoryImpl(
-            get()
+            get(), get()
         )
     }
 }
 
 val useCaseModule = module {
     factory { GetAllTasksUseCase(get()) }
-    factory { SaveTaskUseCase(get()) }
+    factory { RoomCreateTaskUseCase(get()) }
     factory { DeleteTaskUseCase(get()) }
     factory { UpdateCheckBoxTaskUseCase(get()) }
     factory { GetTaskByIdUseCase(get()) }
     factory { UpdateTaskUseCase(get()) }
+    factory { ApiCreateTaskUseCase(get()) }
 }
 
 val userDateBuilder = module {

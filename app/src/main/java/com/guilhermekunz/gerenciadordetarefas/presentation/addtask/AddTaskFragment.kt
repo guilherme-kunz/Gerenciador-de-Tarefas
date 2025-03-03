@@ -9,11 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.guilhermekunz.gerenciadordetarefas.R
 import com.guilhermekunz.gerenciadordetarefas.databinding.FragmentAddTaskBinding
+import com.guilhermekunz.gerenciadordetarefas.domain.entity.TaskEntity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AddTaskFragment : Fragment() {
@@ -33,21 +33,8 @@ class AddTaskFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupInputs()
         setupCancelClickListener()
         setupSaveClickListener()
-    }
-
-    private fun setupInputs() {
-        binding.etTaskTitle.addTextChangedListener {
-            viewModel.setTitle(it.toString())
-        }
-        binding.etTaskDescription.addTextChangedListener {
-            viewModel.setDescription(it.toString())
-        }
-        binding.cbTaskCompleted.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setChecked(isChecked)
-        }
     }
 
     private fun setupCancelClickListener() {
@@ -59,7 +46,12 @@ class AddTaskFragment : Fragment() {
     private fun setupSaveClickListener() {
         binding.btnSaveTask.setOnClickListener {
             hideKeyboard()
-            viewModel.save()
+            val task = TaskEntity(
+                title = binding.etTaskTitle.text.toString(),
+                description = binding.etTaskDescription.text.toString(),
+                isChecked = binding.cbTaskCompleted.isChecked,
+            )
+            viewModel.apiCreateTask(task, requireContext())
             Toast.makeText(requireContext(), "Tarefa salva", Toast.LENGTH_SHORT).show()
             Handler(Looper.getMainLooper()).postDelayed({
                 findNavController().navigate(R.id.action_addTaskFragment_to_taskListFragment)

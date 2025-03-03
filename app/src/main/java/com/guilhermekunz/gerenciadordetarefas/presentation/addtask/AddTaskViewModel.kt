@@ -1,33 +1,53 @@
 package com.guilhermekunz.gerenciadordetarefas.presentation.addtask
 
+import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.SaveTaskUseCase
+import com.guilhermekunz.gerenciadordetarefas.data.network.NetworkResponse
+import com.guilhermekunz.gerenciadordetarefas.domain.entity.TaskEntity
+import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.ApiCreateTaskUseCase
+import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.usecase.RoomCreateTaskUseCase
+import com.guilhermekunz.gerenciadordetarefas.presentation.utils.isNetworkAvailable
 import kotlinx.coroutines.launch
 
-class AddTaskViewModel(private val saveTaskUseCase: SaveTaskUseCase) : ViewModel() {
+class AddTaskViewModel(private val roomCreateTaskUseCase: RoomCreateTaskUseCase,
+                       private val createTaskUseCase: ApiCreateTaskUseCase
+) : ViewModel() {
 
-    private var title: String? = null
-    private var description: String? = null
-    private var isChecked: Boolean = false
+    private val _taskCreationState = MutableLiveData<TaskEntity>()
+    val taskCreationState: LiveData<TaskEntity> = _taskCreationState
+    private val _error = MutableLiveData<Unit>()
+    val error: LiveData<Unit> = _error
 
-    fun setTitle(title: String) {
-        this.title = title
+    fun apiCreateTask(task: TaskEntity, context: Context) {
+        if (isNetworkAvailable(context)) {
+            apiCreateTask(task)
+        } else {
+            roomCreateTask(task)
+        }
     }
 
-    fun setDescription(description: String) {
-        this.description = description
-    }
-
-    fun setChecked(isChecked: Boolean) {
-        this.isChecked = isChecked
-    }
-
-    fun save() {
-        if (!title.isNullOrBlank() && !description.isNullOrBlank()) {
+    private fun roomCreateTask(task: TaskEntity) {
             viewModelScope.launch {
-                saveTaskUseCase(title!!, description!!, isChecked, false)
+                roomCreateTaskUseCase(task)
             }
+    }
+
+    private fun apiCreateTask(task: TaskEntity) {
+        viewModelScope.launch {
+           when (val result = createTaskUseCase.execute(task)) {
+               is NetworkResponse.Error -> {
+                   _error.value = Unit
+               }
+               is NetworkResponse.Success -> {
+                   result.data.let {
+                       _taskCreationState.value = it
+                       roomCreateTask(it)
+                   }
+               }
+           }
         }
     }
 

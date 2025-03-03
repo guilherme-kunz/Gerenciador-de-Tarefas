@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.guilhermekunz.gerenciadordetarefas.data.database.dao.TaskDao
 import com.guilhermekunz.gerenciadordetarefas.domain.entity.TaskEntity
 
-@Database(entities = [TaskEntity::class], version = 1, exportSchema = false)
+@Database(entities = [TaskEntity::class], version = 2, exportSchema = false)
 abstract class TaskDatabase : RoomDatabase() {
 
     abstract val taskDao: TaskDao

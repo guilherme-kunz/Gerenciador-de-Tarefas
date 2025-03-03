@@ -52,7 +52,6 @@ class EditTaskFragment : Fragment() {
                 title = binding.etTaskTitleEdit.text.toString(),
                 description = binding.etTaskDescriptionEdit.text.toString(),
                 isChecked = binding.cbTaskCompleted.isChecked,
-                isSynced = false
             )
             viewModel.updateTask(updatedTask)
             Toast.makeText(requireContext(), "Tarefa atualizada", Toast.LENGTH_SHORT).show()
