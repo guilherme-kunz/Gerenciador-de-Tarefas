@@ -8,5 +8,7 @@ data class TaskEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
     val description: String,
-    val isChecked: Boolean
+    val isChecked: Boolean,
+    val isSynced: Boolean = false,
+    val isDeleted: Boolean = false
 )

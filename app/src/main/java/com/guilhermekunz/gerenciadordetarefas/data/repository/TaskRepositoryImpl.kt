@@ -1,7 +1,6 @@
 package com.guilhermekunz.gerenciadordetarefas.data.repository
 
 import com.guilhermekunz.gerenciadordetarefas.data.database.dao.TaskDao
-import com.guilhermekunz.gerenciadordetarefas.data.network.NetworkResponse
 import com.guilhermekunz.gerenciadordetarefas.data.network.TaskApiService
 import com.guilhermekunz.gerenciadordetarefas.domain.entity.TaskEntity
 import com.guilhermekunz.gerenciadordetarefas.domain.interfaces.repository.Repository
@@ -11,7 +10,8 @@ class TaskRepositoryImpl(private val taskDao: TaskDao,
     private val apiService: TaskApiService): Repository {
 
     override suspend fun insertTask(task: TaskEntity) {
-        taskDao.insertTask(task)
+        val taskWithSyncFlag = task.copy(isSynced = false)
+        taskDao.insertTask(taskWithSyncFlag)
     }
 
     override fun getAllTasks(): Flow<List<TaskEntity>> {
@@ -23,23 +23,38 @@ class TaskRepositoryImpl(private val taskDao: TaskDao,
     }
 
     override suspend fun update(task: TaskEntity) {
-        taskDao.update(task)
+        val updatedTask = task.copy(isSynced = false)
+        taskDao.update(updatedTask)
     }
 
     override suspend fun getTaskById(taskId: Long): TaskEntity? {
         return taskDao.getTaskById(taskId)
     }
 
-    override suspend fun createTask(task: TaskEntity): NetworkResponse<TaskEntity> {
-        return try {
-            val response = apiService.createTask(task)
-            if (response.isSuccessful) {
-                NetworkResponse.Success(response.body()!!)
-            } else {
-                NetworkResponse.Error(Throwable())
+    override suspend fun syncTasksWithServer() {
+        // 1. Sincronizar tarefas criadas ou atualizadas
+        val unsyncedTasks = taskDao.getUnsyncedTasks()
+        unsyncedTasks.collect { tasks ->
+            tasks.forEach { task ->
+                val response = if (task.id == 0L) {
+                    apiService.createTask(task)
+                } else {
+                    apiService.updateTask(task.id, task)
+                }
+                if (response.isSuccessful) {
+                    taskDao.update(task.copy(isSynced = true))
+                }
             }
-        } catch (e: Throwable) {
-            NetworkResponse.Error(e)
+        }
+        // 2. Sincronizar tarefas deletadas
+        val deletedTasks = taskDao.getDeletedTasks()
+        deletedTasks.collect { tasks ->
+            tasks.forEach { task ->
+                val response = apiService.deleteTask(task.id)
+                if (response.isSuccessful) {
+                    taskDao.deleteTask(task) // Remove definitivamente do banco local
+                }
+            }
         }
     }
 }

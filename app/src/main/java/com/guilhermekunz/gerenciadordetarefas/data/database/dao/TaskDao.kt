@@ -26,4 +26,10 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: Long): TaskEntity?
+
+    @Query("SELECT * FROM tasks WHERE isSynced = 0")
+    fun getUnsyncedTasks(): Flow<List<TaskEntity>>
+
+    @Query("SELECT * FROM tasks WHERE isDeleted = 1")
+    fun getDeletedTasks(): Flow<List<TaskEntity>>
 }

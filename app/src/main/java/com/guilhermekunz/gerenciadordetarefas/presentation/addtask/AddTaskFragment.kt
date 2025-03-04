@@ -51,7 +51,7 @@ class AddTaskFragment : Fragment() {
                 description = binding.etTaskDescription.text.toString(),
                 isChecked = binding.cbTaskCompleted.isChecked,
             )
-            viewModel.apiCreateTask(task, requireContext())
+            viewModel.roomCreateTask(task)
             Toast.makeText(requireContext(), "Tarefa salva", Toast.LENGTH_SHORT).show()
             Handler(Looper.getMainLooper()).postDelayed({
                 findNavController().navigate(R.id.action_addTaskFragment_to_taskListFragment)
