@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.guilhermekunz.gerenciadordetarefas.R
 import com.guilhermekunz.gerenciadordetarefas.databinding.FragmentTaskListBinding
+import com.guilhermekunz.gerenciadordetarefas.domain.entity.TaskEntity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TaskListFragment : Fragment() {
@@ -40,7 +41,15 @@ class TaskListFragment : Fragment() {
                 val bundle = bundleOf("args" to taskId)
                 findNavController().navigate(R.id.action_taskListFragment_to_editTaskFragment, bundle)
             },
-            onDeleteClick = { task -> viewModel.deleteTask(task) },
+            onDeleteClick = { task ->
+                val updatedTask = TaskEntity(
+                    id = task.id,
+                    title = task.title,
+                    description = task.description,
+                    isChecked = task.isChecked,
+                    isDeleted = true
+                )
+                 viewModel.deleteTask(updatedTask) },
             onTaskChecked = { task -> viewModel.updateTask(task) }
         )
         binding.recyclerViewTasks.layoutManager = LinearLayoutManager(requireContext())
@@ -49,7 +58,7 @@ class TaskListFragment : Fragment() {
 
     private fun observeTasks() {
         viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
-            adapter.submitList(tasks)
+            adapter.submitList(tasks.filter { !it.isDeleted })
         }
     }
 
