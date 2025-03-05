@@ -76,8 +76,11 @@ dependencies {
     testImplementation (libs.truth)
     testImplementation (libs.androidx.core.testing)
     testImplementation (libs.androidx.room.testing)
+    testImplementation (libs.koin.test)
+    testImplementation (libs.koin.android)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.core.testing)
+    androidTestImplementation(libs.androidx.work.testing)
 }
